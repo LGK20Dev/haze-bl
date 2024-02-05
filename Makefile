@@ -1,4 +1,6 @@
-TOOLPREFIX?=arm-linux-gnueabihf-
+ARMTOOLPREFIX?=arm-linux-gnueabihf-
+ARM64TOOLPREFIX?=aarch64-linux-gnu-
+
 CC=$(TOOLPREFIX)gcc
 CPP=$(TOOLPREFIX)cpp
 LD=$(TOOLPREFIX)ld
