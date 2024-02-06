@@ -44,7 +44,7 @@ ifeq ($(shell test -e ./scripts/$(DEVICE)/postbuild.sh && echo -n yes),yes)
 endif
 
 hazebin: src/entry.o src/main.o src/linker/linker.lds
-	$(LD) entry.o main.o -o $@ --script=src/linker/linker.lds
+	$(LD) src/entry.o src/main.o -o $@ --script=src/linker/linker.lds
 
 src/linker/linker.lds:
 ifeq ($(ARCH), arm64)
