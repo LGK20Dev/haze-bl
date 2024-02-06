@@ -4,6 +4,10 @@ ARM64TOOLPREFIX?=aarch64-linux-gnu-
 DEVICE?=none
 ARCH?=none
 
+# For haze_boot.img, optional
+FDT?=none
+RAMDISK?=none
+
 # Improve this later
 ifeq ($(DEVICE), CPH1979)
 ARCH=arm64
@@ -19,19 +23,25 @@ ifeq ($(ARCH), arm64)
 TOOLPREFIX=$(ARM64TOOLPREFIX)
 endif
 
-$(info DEVICE=$(DEVICE))
-$(info ARCH=$(ARCH))
-$(info TOOLPREFIX=$(TOOLPREFIX))
-
 ifeq ($(strip $(TOOLPREFIX)),)
 $(error Please specify a correct ARCH, or a correct DEVICE)
 endif
+
+$(info DEVICE=$(DEVICE))
+$(info ARCH=$(ARCH))
+$(info TOOLPREFIX=$(TOOLPREFIX))
 
 # DO NOT CHANGE THIS DIRECTLY
 # unless you know what you're doing
 CC=$(TOOLPREFIX)gcc
 CPP=$(TOOLPREFIX)cpp
 LD=$(TOOLPREFIX)ld
+
+haze_boot.img: hazebin
+ifeq ($(shell test -e ./scripts/$(DEVICE)/postbuild.sh && echo -n yes),yes)
+		$(info "Running $(DEVICE) postbuild script...")
+		./scripts/$(DEVICE)/postbuild.sh $(FDT) $(RAMDISK)
+endif
 
 hazebin: src/entry.o src/main.o src/linker/linker.lds
 	$(LD) entry.o main.o -o $@ --script=src/linker/linker.lds
@@ -44,3 +54,6 @@ endif
 ifeq ($(ARCH), arm)
 	$(CPP) src/linker/linker.lds.S.arm -P -o $@
 endif
+
+clean:
+	rm -fv src/*.o src/linker/linker.lds
