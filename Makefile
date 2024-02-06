@@ -1,22 +1,44 @@
 ARMTOOLPREFIX?=arm-linux-gnueabihf-
 ARM64TOOLPREFIX?=aarch64-linux-gnu-
 
-ARMCC=$(ARMTOOLPREFIX)gcc
-ARMCPP=$(ARMTOOLPREFIX)cpp
-ARMLD=$(ARMTOOLPREFIX)ld
+DEVICE?=none
+ARCH?=none
 
-ARM64CC=$(ARM64TOOLPREFIX)gcc
-ARM64CPP=$(ARM64TOOLPREFIX)cpp
-ARM64LD=$(ARM64TOOLPREFIX)ld
+# Improve this later
+ifeq ($(DEVICE), CPH1979)
+ARCH=arm64
+endif
 
-arm: entry.o main.o linker.lds.arm
-	$(ARMLD) entry.o main.o -o haze --script=linker.lds
+# Building for ARM
+ifeq ($(ARCH), arm)
+TOOLPREFIX=$(ARMTOOLPREFIX)
+endif
 
-arm64: entry.o main.o linker.lds.aarch64
-	$(ARM64LD) entry.o main.o -o haze --script=linker.lds
+# Building for ARM64
+ifeq ($(ARCH), arm64)
+TOOLPREFIX=$(ARM64TOOLPREFIX)
+endif
 
-linker.lds.aarch64: linker.lds.S.aarch64
-	$(ARM64CPP) $< -P -o linker.lds
+$(info DEVICE=$(DEVICE))
+$(info ARCH=$(ARCH))
+$(info TOOLPREFIX=$(TOOLPREFIX))
 
-linker.lds.arm: linker.lds.S.arm
-	$(ARMCPP) $< -P -o linker.lds
+ifeq ($(strip $(TOOLPREFIX)),)
+$(error Please specify a correct ARCH, or a correct DEVICE)
+endif
+
+CC=$(TOOLPREFIX)gcc
+CPP=$(TOOLPREFIX)cpp
+LD=$(TOOLPREFIX)ld
+
+hazebin: entry.o main.o linker.lds
+	$(LD) entry.o main.o -o $@ --script=linker.lds
+
+linker.lds:
+ifeq ($(ARCH), arm64)
+	$(CPP) linker.lds.S.aarch64 -P -o $@
+endif
+
+ifeq ($(ARCH), arm)
+	$(CPP) linker.lds.S.arm -P -o $@
+endif
