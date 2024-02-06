@@ -21,7 +21,5 @@ void main() {
     clean_fb(0x789b0000, 1080, 2340, 4);
 
 	draw_pixel(0x789b0000, 100, 100, 1080, 2340);
-
-    // Infinite loop to prevent the pseudokernel from exiting
-    while (1) {}
+    
 }

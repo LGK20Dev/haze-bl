@@ -37,19 +37,19 @@ check_files()
 
 gzip_kernel()
 {
-    gzip -n9 hazebin
+    gzip -n9 haze
 }
 
 append_dtb()
 {
     # OPPO Bootloader Quirk
-    dd if=$1 of=hazebin.gz bs=1 seek=$dtb_offset conv=notrunc
+    dd if=$1 of=haze.gz bs=1 seek=$dtb_offset conv=notrunc
 }
 
 make_bootimg()
 {
-    echo mkbootimg --kernel hazebin.gz --ramdisk $2 --base $BASE --kernel_offset $KERNEL --ramdisk_offset $RAMDISK --second_offset $SECOND --tags_offset $TAGS --header_version $HEADER -o haze_boot.img
-    mkbootimg --kernel hazebin.gz --ramdisk $2 --base $BASE --kernel_offset $KERNEL --ramdisk_offset $RAMDISK --second_offset $SECOND --tags_offset $TAGS --header_version $HEADER --os_version $OSVER --os_patch_level $PATCHLEVEL --cmdline "$CMDLINE" -o haze_boot.img
+    echo mkbootimg --kernel haze.gz --ramdisk $2 --base $BASE --kernel_offset $KERNEL --ramdisk_offset $RAMDISK --second_offset $SECOND --tags_offset $TAGS --header_version $HEADER -o haze_boot.img
+    mkbootimg --kernel haze.gz --ramdisk $2 --base $BASE --kernel_offset $KERNEL --ramdisk_offset $RAMDISK --second_offset $SECOND --tags_offset $TAGS --header_version $HEADER --os_version $OSVER --os_patch_level $PATCHLEVEL --cmdline "$CMDLINE" -o haze_boot.img
 }
 
 ls

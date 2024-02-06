@@ -36,12 +36,16 @@ $(info TOOLPREFIX=$(TOOLPREFIX))
 CC=$(TOOLPREFIX)gcc
 CPP=$(TOOLPREFIX)cpp
 LD=$(TOOLPREFIX)ld
+OBJCPY=$(TOOLPREFIX)objcopy
 
-haze_boot.img: hazebin
+haze_boot.img: haze
 ifeq ($(shell test -e ./scripts/$(DEVICE)/postbuild.sh && echo -n yes),yes)
 		$(info "Running $(DEVICE) postbuild script...")
 		./scripts/$(DEVICE)/postbuild.sh $(FDT) $(RAMDISK)
 endif
+
+haze: hazebin
+	$(OBJCPY) -O binary $< $@
 
 hazebin: src/entry.o src/main.o src/linker/linker.lds
 	$(LD) src/entry.o src/main.o -o $@ --script=src/linker/linker.lds
